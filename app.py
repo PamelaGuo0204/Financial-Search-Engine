@@ -6,59 +6,12 @@ import pickle
 from scipy import sparse
 import numpy as np
 
-#以下代码在程序初始化时载入内存
-'''
-tfidf = sparse.load_npz('CompressedTFIDFMatrix.npz').toarray()
-headline = sparse.load_npz('CompressedHeadlineMatrix.npz').toarray()
-onlyContent = sparse.load_npz('CompressedContentMatrix.npz').toarray()
-'''
 
-'''
-f = open("tfidfDict.pkl", "rb")
-tfidf = pickle.load(f)
-print("tfidf successfully")
-f = open("headlineDict.pkl", "rb")
-headline = pickle.load(f)
-print("headline successfully")
-f = open("contentDict.pkl", "rb")
-onlyContent = pickle.load(f)
-print("content successfully")
-f = open("wordMap.pkl", "rb")
-allWordMap = pickle.load(f)
-f = open("headlineWordMap.pkl", "rb")
-headlineWordMap = pickle.load(f)
-f = open("contentWordMap.pkl", "rb")
-contentWordMap = pickle.load(f)
-
-'''
-print("3")
 #创建Flask对象app并初始化
 app = Flask(__name__)
 
 app.config['DEBUG'] = True  # 开启 debug
 mongo = PyMongo(app, uri="mongodb+srv://ttds:ttdsyyds@cluster1.22kwt.mongodb.net/TTDS?retryWrites=true&w=majority")  # 连接数据库
-
-# 以下代码在程序初始化时载入内存
-'''
-tfidf = sparse.load_npz('CompressedTFIDFMatrix.npz').toarray()
-headline = sparse.load_npz('CompressedHeadlineMatrix.npz').toarray()
-onlyContent = sparse.load_npz('CompressedContentMatrix.npz').toarray()
-'''
-# f = open("tfidfDict.pkl", "rb")
-# tfidf = pickle.load(f)
-# print("tfidf successfully")
-# f = open("headlineDict.pkl", "rb")
-# headline = pickle.load(f)
-# print("headline successfully")
-# f = open("contentDict.pkl", "rb")
-# onlyContent = pickle.load(f)
-# print("content successfully")
-# f = open("wordMap.pkl", "rb")
-# allWordMap = pickle.load(f)
-# f = open("headlineWordMap.pkl", "rb")
-# headlineWordMap = pickle.load(f)
-# f = open("contentWordMap.pkl", "rb")
-# contentWordMap = pickle.load(f)
 
 
 
@@ -350,9 +303,8 @@ def advanced_search():
         return render_template("outcome.html", text=text, datas=datas)
 
 
-print("1")
+
 if __name__ == '__main__':
-    print("2")
     app.run(host='0.0.0.0',port=8080,debug=False)
     # app.run(port=80, debug=True)
 

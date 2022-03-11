@@ -10,7 +10,6 @@ from stemming.porter2 import stem
 from xml.dom.minidom import parse
 from collections import defaultdict
 from scipy import sparse
-#from app import tfidf,headline,onlyContent,allWordMap,headlineWordMap,contentWordMap
 
 #Lab01 Function
 def textTransformation(content):
@@ -357,11 +356,9 @@ def TFIDFSearch(query, termIndex,docCount):
     return ansList
 ''' 
 #!!!!!!!!TermID范围为1~311648，实际为311648词，但tfidf矩阵第一行全0，实际不用操作
-def getExistDoc(termID, tfidfDict):
-    doc = set()
-    for (x,y) in tfidfDict.keys():
-        if x == termID:
-            doc.add(y)
+def getExistDoc(termID, tfidfMatrix):
+    
+    doc = set(tfidf[termID].nonzero()[0])
     return doc
     
     
@@ -384,7 +381,7 @@ def TFIDFSearch(query, tfidf, docCount, searchType):
     for ID in docSet:
         scoreDict[ID] = 0
         for termID in termIDList:
-            scoreDict[ID] += tfidf[(termID,ID)]
+            scoreDict[ID] += tfidf[termID][ID]
     
     ansList = sorted(scoreDict.items(), key=lambda v: v[1], reverse = True) 
     ansList.sort(key = lambda x: (-x[1], int(x[0])))
@@ -414,7 +411,7 @@ def output(query):
             break
             
     print("sucessfully search!")
-    # print(result)
+    print(result)
     return result
 
 def outputHeadline(query):
@@ -438,7 +435,7 @@ def outputHeadline(query):
             break
             
     print("sucessfully search!")
-    # print(result)
+    print(result)
     return result
 
 def outputContent(query):
@@ -462,26 +459,14 @@ def outputContent(query):
             break
             
     print("sucessfully search!")
-    # print(result)
     return result
 
-# 以下代码在程序初始化时载入内存
-'''
+
+#以下代码在程序初始化时载入内存
 tfidf = sparse.load_npz('CompressedTFIDFMatrix.npz').toarray()
 headline = sparse.load_npz('CompressedHeadlineMatrix.npz').toarray()
 onlyContent = sparse.load_npz('CompressedContentMatrix.npz').toarray()
-'''
-f = open("tfidfDict.pkl", "rb")
-tfidf = pickle.load(f)
-print("tfidf successfully")
-f = open("headlineDict.pkl", "rb")
-headline = pickle.load(f)
-print("headline successfully")
-f = open("contentDict.pkl", "rb")
-onlyContent = pickle.load(f)
-print("content successfully")
-
-f = open("allWordMap.pkl", "rb")
+f = open("wordMap.pkl", "rb")
 allWordMap = pickle.load(f)
 f = open("headlineWordMap.pkl", "rb")
 headlineWordMap = pickle.load(f)
@@ -489,5 +474,5 @@ f = open("contentWordMap.pkl", "rb")
 contentWordMap = pickle.load(f)
 
 #output("bank")
-# outputHeadline("bank")
-# outputContent("bank")
+#outputHeadline("bank")
+#outputContent("bank")
