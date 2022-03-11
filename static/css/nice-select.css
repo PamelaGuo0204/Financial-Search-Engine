@@ -20,7 +20,7 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    width: 50%;
+    width: 100%;
     cursor: pointer;
     font-family: inherit;
     font-weight: normal;
@@ -33,7 +33,7 @@
     text-align: center;
     margin-right: 12px;
     height: 53px;
-    padding: 15px 35px;
+    padding: 11px 35px;
     font-size: 18px;
     border-radius: 40px;
     border: 0px;

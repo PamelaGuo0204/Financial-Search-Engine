@@ -1,24 +1,104 @@
 from flask import Flask, render_template, request, jsonify,redirect, url_for
 import Group as g
 from flask_pymongo import PyMongo
+import math
+import pickle
+from scipy import sparse
+import numpy as np
 
+#以下代码在程序初始化时载入内存
+'''
+tfidf = sparse.load_npz('CompressedTFIDFMatrix.npz').toarray()
+headline = sparse.load_npz('CompressedHeadlineMatrix.npz').toarray()
+onlyContent = sparse.load_npz('CompressedContentMatrix.npz').toarray()
+'''
+
+'''
+f = open("tfidfDict.pkl", "rb")
+tfidf = pickle.load(f)
+print("tfidf successfully")
+f = open("headlineDict.pkl", "rb")
+headline = pickle.load(f)
+print("headline successfully")
+f = open("contentDict.pkl", "rb")
+onlyContent = pickle.load(f)
+print("content successfully")
+f = open("wordMap.pkl", "rb")
+allWordMap = pickle.load(f)
+f = open("headlineWordMap.pkl", "rb")
+headlineWordMap = pickle.load(f)
+f = open("contentWordMap.pkl", "rb")
+contentWordMap = pickle.load(f)
+
+'''
+print("3")
 #创建Flask对象app并初始化
 app = Flask(__name__)
 
 app.config['DEBUG'] = True  # 开启 debug
-mongo = PyMongo(app, uri="mongodb+srv://ttds:ttdsyyds@cluster0.22kwt.mongodb.net/TTDS?retryWrites=true&w=majority")  # 连接数据库
+mongo = PyMongo(app, uri="mongodb+srv://ttds:ttdsyyds@cluster1.22kwt.mongodb.net/TTDS?retryWrites=true&w=majority")  # 连接数据库
+
+# 以下代码在程序初始化时载入内存
+'''
+tfidf = sparse.load_npz('CompressedTFIDFMatrix.npz').toarray()
+headline = sparse.load_npz('CompressedHeadlineMatrix.npz').toarray()
+onlyContent = sparse.load_npz('CompressedContentMatrix.npz').toarray()
+'''
+# f = open("tfidfDict.pkl", "rb")
+# tfidf = pickle.load(f)
+# print("tfidf successfully")
+# f = open("headlineDict.pkl", "rb")
+# headline = pickle.load(f)
+# print("headline successfully")
+# f = open("contentDict.pkl", "rb")
+# onlyContent = pickle.load(f)
+# print("content successfully")
+# f = open("wordMap.pkl", "rb")
+# allWordMap = pickle.load(f)
+# f = open("headlineWordMap.pkl", "rb")
+# headlineWordMap = pickle.load(f)
+# f = open("contentWordMap.pkl", "rb")
+# contentWordMap = pickle.load(f)
 
 
-# run this once
-# --------
-# m=backend_model.Model()
-# m.prepare_model()
-# --------
+
 
 #从数据库中查找信息
 def find_data(data_dic):
-    result = mongo.db.data.find(data_dic)
-    return result
+    results = mongo.db.data.find(data_dic)
+    return results
+
+
+#从数据库中查找记录的总条数
+def count_data(data_dic):
+    results = mongo.db.data.count_documents(data_dic)
+    return results
+#分页
+def get_page(total,p):
+    show_page = 5   # 显示的页码数
+    pageoffset = 2  # 偏移量
+    start = 1    #分页条开始
+    end = total  #分页条结束
+
+    if total > show_page:
+        if p > pageoffset:
+            start = p - pageoffset
+            if total > p + pageoffset:
+                end = p + pageoffset
+            else:
+                end = total
+        else:
+            start = 1
+            if total > show_page:
+                end = show_page
+            else:
+                end = total
+        if p + pageoffset > total:
+            start = start - (p + pageoffset - end)
+    #用于模版中循环
+    dic = range(start, end + 1)
+    return dic
+
 
 #通过python装饰器的方法定义路由地址
 @app.route("/")
@@ -50,87 +130,230 @@ def readmore4():
 def index():
     return render_template("index.html")
 
-#get the query from the page
-@app.route("/query/", methods=['GET','POST'])
-def get_query():
-    if request.method == 'POST':
-        text = request.form["txt"]
-    # if the input is empty, stay on the same page
-        if text!= "":
-            print(text)
-            return redirect(url_for("result", inp=text))
-        else:
-            return redirect(url_for('index'))
+
 
 #show the result
 @app.route("/result/", methods=['GET','POST'])
-def result():
+def show():
+    p = request.args.get('p')
+    show_status = 0
+    if not p:
+        p = 1
+    else:
+        p = int(p)
+        if p > 1:
+            show_status = 1
+    limit_start = (p - 1) * 10
+
     if request.method == 'POST':
+        global text
         text = request.form["txt"]
     # if the input is empty, stay on the same page
-        if text!= "":
-            result = g.output(text)
-            doc = find_data({'docno': {"$in": result}})
-            return render_template("outcome.html",results=doc)
-        else:
-            return redirect(url_for('index'))
-    # page_no = request.args.get('page', 0, type=int)
-    # page_size = request.args.get('pageSize', 5, type=int)
-
-class Pagination(object):
-    """
-    paginate.page current page
-    paginate.pages total page
-    paginate.total total data
-    """
-
-    def __init__(self, page,datas=[],page_size=10):
-        try:
-            current_page = int(page)
-        except Exception as e:
-            current_page = 1
-        if current_page <= 0:
-            current_page = 1
-
-        self
-        ## 10 per page
-        self.page_size = page_size
-        # current page
-        self.page = current_page
-        # total data size
-        self.total = len(datas)
-        # total page
-        _pages = (self.total + page_size - 1) / page_size
-        self.pages = int(_pages)
-        self.has_prev = current_page > 1 and  current_page <= self.pages if True else False
-        self.has_next = current_page < self.pages if True else False
-        start_index = (self.page-1)*self.page_size
-        end_index = self.page*self.page_size
-        self.items = datas[start_index:end_index]
-
-    @property
-    def prev_num(self):
-        if self.has_prev:
-            return int(self.page - 1)
-        else:
-            return self.pages
-
-    @property
-    def next_num(self):
-        if self.has_next:
-            return int(self.page + 1)
-        else:
-            return self.pages
+    if text!= "":
+        global result
+        result = g.output(text)
+        # doc = find_data({'docno': {"$in": result}})
+        doc = find_data({'docno': {"$in": result}}).limit(10).skip(limit_start)
+            #总页数
+        total = count_data({'docno': {"$in": result}})
+        page_total = int(math.ceil(total / 10))
+        page_list = get_page(page_total, p)
+        datas = {
+                'data_list': doc,
+                'p': p,
+                'page_total': page_total,
+                'show_status': show_status,
+                'page_list': page_list
+            }
+        return render_template("outcome.html", text=text,datas=datas)
+    else:
+        return redirect(url_for('index'))
 
 
 
-    def iter_pages(self):
-        for num in range(1, self.pages + 1):
-                yield num
+@app.route('/result/time/',methods=['GET','POST'])
+def select_time():
+    p = request.args.get('p')
+    show_status = 0
+    if not p:
+        p = 1
+    else:
+        p = int(p)
+        if p > 1:
+            show_status = 1
+    limit_start = (p - 1) * 10
+
+    if request.method == 'POST':
+        global time
+        global text1
+        time = str(request.form["time"])
+        text1 = request.form["txt"]
+    if text1 != "":
+        global results
+        results = g.output(text1)
+
+    if time == "Anytime":
+        doc = find_data({'docno': {"$in": results}}).limit(10).skip(limit_start)
+        # 总页数
+        total = count_data({'docno': {"$in": results}})
+        page_total = int(math.ceil(total / 10))
+        page_list = get_page(page_total, p)
+        datas = {
+            'data_list': doc,
+            'p': p,
+            'page_total': page_total,
+            'show_status': show_status,
+            'page_list': page_list
+        }
+        return render_template("outcome1.html", text=text1, datas=datas)
+
+    elif time == "Since 2013":
+        doc = find_data({'docno': {"$in": results},'time':{"$gte":"2013-01-01T00:00:00Z","$lt":"2013-12-31T23:59:99Z"}}).limit(10).skip(limit_start)
+        # 总页数
+        total = count_data({'docno': {"$in": results},'time':{"$gte":"2013-01-01T00:00:00Z","$lt":"2013-12-31T23:59:99Z"}})
+        page_total = int(math.ceil(total / 10))
+        page_list = get_page(page_total, p)
+        datas = {
+            'data_list': doc,
+            'p': p,
+            'page_total': page_total,
+            'show_status': show_status,
+            'page_list': page_list
+        }
+        return render_template("outcome1.html", text=text1,datas=datas)
+
+    elif time == "Since 2014":
+        doc = find_data(
+            {'docno': {"$in": results}, 'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+        # 总页数
+        total = count_data({'docno': {"$in": results}, 'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}})
+        page_total = int(math.ceil(total / 10))
+        page_list = get_page(page_total, p)
+        datas = {
+            'data_list': doc,
+            'p': p,
+            'page_total': page_total,
+            'show_status': show_status,
+            'page_list': page_list
+        }
+        return render_template("outcome1.html", text=text1,datas=datas)
+
+    elif time == "Since 2015":
+        doc = find_data(
+            {'docno': {"$in": results}, 'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+        # 总页数
+        total = count_data({'docno': {"$in": results}, 'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}})
+        page_total = int(math.ceil(total / 10))
+        page_list = get_page(page_total, p)
+        datas = {
+            'data_list': doc,
+            'p': p,
+            'page_total': page_total,
+            'show_status': show_status,
+            'page_list': page_list
+        }
+        return render_template("outcome1.html", text=text1,datas=datas)
+
+    elif time == "Since 2016":
+        doc = find_data(
+            {'docno': {"$in": results}, 'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+        # 总页数
+        total = count_data({'docno': {"$in": results}, 'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}})
+        page_total = int(math.ceil(total / 10))
+        page_list = get_page(page_total, p)
+        datas = {
+            'data_list': doc,
+            'p': p,
+            'page_total': page_total,
+            'show_status': show_status,
+            'page_list': page_list
+        }
+        return render_template("outcome1.html", text=text1,datas=datas)
 
 
+#advance search
+@app.route("/advanced_search/",methods=['GET','POST'])
+def advanced_search():
+    p = request.args.get('p')
+    show_status = 0
+    if not p:
+        p = 1
+    else:
+        p = int(p)
+        if p > 1:
+            show_status = 1
+    limit_start = (p - 1) * 10
+
+    if request.method == 'POST':
+        global text
+        text = request.form["txt"]
+        title = request.form["type"]
+    print(title)
+
+    if title == "Title":
+        global result_T
+        result_T = g.outputHeadline(text)
+        # doc = find_data({'docno': {"$in": result}})
+        doc = find_data({'docno': {"$in": result_T}}).limit(10).skip(limit_start)
+        # 总页数
+        total = count_data({'docno': {"$in": result_T}})
+        page_total = int(math.ceil(total / 10))
+        page_list = get_page(page_total, p)
+        datas = {
+            'data_list': doc,
+            'p': p,
+            'page_total': page_total,
+            'show_status': show_status,
+            'page_list': page_list
+        }
+        return render_template("outcome.html", text=text, datas=datas)
+
+
+    if title == "Article":
+        global result_A
+        result_A = g.outputContent(text)
+        # doc = find_data({'docno': {"$in": result}})
+        doc = find_data({'docno': {"$in": result_A}}).limit(10).skip(limit_start)
+        # 总页数
+        total = count_data({'docno': {"$in": result_A}})
+        page_total = int(math.ceil(total / 10))
+        page_list = get_page(page_total, p)
+        datas = {
+            'data_list': doc,
+            'p': p,
+            'page_total': page_total,
+            'show_status': show_status,
+            'page_list': page_list
+        }
+        return render_template("outcome.html", text=text, datas=datas)
+
+
+    if title == "Full text":
+        global result_F
+        result_F = g.output(text)
+        # doc = find_data({'docno': {"$in": result}})
+        doc = find_data({'docno': {"$in": result_F}}).limit(10).skip(limit_start)
+        # 总页数
+        total = count_data({'docno': {"$in": result_F}})
+        page_total = int(math.ceil(total / 10))
+        page_list = get_page(page_total, p)
+        datas = {
+            'data_list': doc,
+            'p': p,
+            'page_total': page_total,
+            'show_status': show_status,
+            'page_list': page_list
+        }
+        return render_template("outcome.html", text=text, datas=datas)
+
+
+print("1")
 if __name__ == '__main__':
-    app.run(port=8080)
-
+    print("2")
+    app.run(host='0.0.0.0',port=8080,debug=False)
+    # app.run(port=80, debug=True)
 
 

@@ -5,3 +5,11 @@ BloombergIndex 20220217.pkl
 englishST.txt
 headlineIndex.json
 contentIndex.json
+allWordMap.pkl
+contentDict.pkl
+contentWordMap.pkl
+headlineDict.pkl
+headlineWordMap.pkl
+tfidfDict.pkl
+wordMap.pkl
+static/.DS_Store

@@ -5,9 +5,12 @@ import re
 import math
 import numpy as np
 import pickle
+import json
 from stemming.porter2 import stem
 from xml.dom.minidom import parse
 from collections import defaultdict
+from scipy import sparse
+#from app import tfidf,headline,onlyContent,allWordMap,headlineWordMap,contentWordMap
 
 #Lab01 Function
 def textTransformation(content):
@@ -332,7 +335,7 @@ def getTFIDFvalue(term, DocID, currentIndex, df, docCount):
         score *= math.log10(docCount/df)
         
     return score
-
+'''
 def TFIDFSearch(query, termIndex,docCount):
     termList = query.split()
     scoreDict = {}
@@ -352,72 +355,139 @@ def TFIDFSearch(query, termIndex,docCount):
     ansList = sorted(scoreDict.items(), key=lambda v: v[1], reverse = True) 
     ansList.sort(key = lambda x: (-x[1], int(x[0])))
     return ansList
+''' 
+#!!!!!!!!TermID范围为1~311648，实际为311648词，但tfidf矩阵第一行全0，实际不用操作
+def getExistDoc(termID, tfidfDict):
+    doc = set()
+    for (x,y) in tfidfDict.keys():
+        if x == termID:
+            doc.add(y)
+    return doc
+    
+    
+def TFIDFSearch(query, tfidf, docCount, searchType):
+    if searchType == 0:
+        wordMap = allWordMap
+    elif searchType == 1:
+        wordMap = headlineWordMap
+    elif searchType == 2:
+        wordMap = contentWordMap
+    termList = query.split()
+    termIDList = [wordMap[word] for word in termList]#Term id list
+    scoreDict = {}
+    #对每个term求值，用np矩阵
+    
+    docSet = set()
+    for termID in termIDList:
+        docSet |= getExistDoc(termID, tfidf)
+        
+    for ID in docSet:
+        scoreDict[ID] = 0
+        for termID in termIDList:
+            scoreDict[ID] += tfidf[(termID,ID)]
+    
+    ansList = sorted(scoreDict.items(), key=lambda v: v[1], reverse = True) 
+    ansList.sort(key = lambda x: (-x[1], int(x[0])))
+    return ansList
     
 #output the tfidf search result
 #input:a query on the web
 #output: a list of docids
 def output(query):
     result = []
-    docCount = 10000
-    f = open('BloombergIndex 20220217.pkl', 'rb')
-    termIndex = pickle.load(f)
-    tflist = getTFIDFQuery(query)
-    ansList = TFIDFSearch(tflist, termIndex,docCount)
+    docCount = 447310
+    '''
+    with open('./index.json', 'r') as load_f:
+        termIndex = json.load(load_f)
+    '''
+
+    query = getTFIDFQuery(query)#规范化
+    
+    ansList = TFIDFSearch(query, tfidf, docCount, 0)#是一个tuple list (DocID, score)
+    
+    #输出result
     count = 0
     for item in ansList:
         result.append(str(item[0]))
         count = count + 1
         if count > 150:
             break
+            
     print("sucessfully search!")
-    print(result)
+    # print(result)
     return result
 
+def outputHeadline(query):
+    result = []
+    docCount = 447310
+    '''
+    with open('./index.json', 'r') as load_f:
+        termIndex = json.load(load_f)
+    '''
 
+    query = getTFIDFQuery(query)#规范化
+    
+    ansList = TFIDFSearch(query, headline, docCount, 1)#是一个tuple list (DocID, score)
+    
+    #输出result
+    count = 0
+    for item in ansList:
+        result.append(str(item[0]))
+        count = count + 1
+        if count > 150:
+            break
+            
+    print("sucessfully search!")
+    # print(result)
+    return result
 
-# docCount = 10000
-#
-# f = open('BloombergIndex.pkl', 'rb')
-# termIndex = pickle.load(f)
-# #print(TFIDFSearch('incom tax', termIndex))
-#
-# qlist = getQuery()
-# typeList = typeQuery(qlist)
-#
-# #Output the Boolean answers
-# f = open("./results.boolean.txt",'w')
-# for i in range(len(qlist)):
-#     doc = Search(qlist[i],typeList[i])
-#     doc = list(map(int, doc))
-#     doc = sorted(doc)
-#
-#     #TXT输出搜索结果
-#
-#     for x in doc:
-#         ans = (str(i+1) + ',' + str(x))
-#         f.write(ans + '\n')
-#
-#     '''
-#     #IPython输出搜索结果
-#
-#     print('Current query: ' + qlist[i])
-#     print('Find %d documents.' % len(doc))
-#     print('DocID are: ')
-#     print(doc)
-#     print('')
-#     '''
-# print('Successfully build boolean answers!')
-#
-# #Output the TFIDF answers
-# tflist = getTFIDFQuery()
-# f = open("./results.ranked.txt",'w')
-# for i in range(len(tflist)):
-#     ansList = TFIDFSearch(tflist[i], termIndex)
-#     count = 0
-#     for x in ansList:
-#         count += 1
-#         if count > 150:
-#             break
-#         f.write(str(i+1) + ',' + str(x[0]) + ',' + format(x[1], '.4f') + '\n')
-# print('Successfully build ranked answers!')
-output("bank")
+def outputContent(query):
+    result = []
+    docCount = 447310
+    '''
+    with open('./index.json', 'r') as load_f:
+        termIndex = json.load(load_f)
+    '''
+
+    query = getTFIDFQuery(query)#规范化
+    
+    ansList = TFIDFSearch(query, onlyContent, docCount, 2)#是一个tuple list (DocID, score)
+    
+    #输出result
+    count = 0
+    for item in ansList:
+        result.append(str(item[0]))
+        count = count + 1
+        if count > 150:
+            break
+            
+    print("sucessfully search!")
+    # print(result)
+    return result
+
+# 以下代码在程序初始化时载入内存
+'''
+tfidf = sparse.load_npz('CompressedTFIDFMatrix.npz').toarray()
+headline = sparse.load_npz('CompressedHeadlineMatrix.npz').toarray()
+onlyContent = sparse.load_npz('CompressedContentMatrix.npz').toarray()
+'''
+f = open("tfidfDict.pkl", "rb")
+tfidf = pickle.load(f)
+print("tfidf successfully")
+f = open("headlineDict.pkl", "rb")
+headline = pickle.load(f)
+print("headline successfully")
+f = open("contentDict.pkl", "rb")
+onlyContent = pickle.load(f)
+print("content successfully")
+
+f = open("allWordMap.pkl", "rb")
+allWordMap = pickle.load(f)
+f = open("headlineWordMap.pkl", "rb")
+headlineWordMap = pickle.load(f)
+f = open("contentWordMap.pkl", "rb")
+contentWordMap = pickle.load(f)
+
+#output("bank")
+# outputHeadline("bank")
+# outputContent("bank")

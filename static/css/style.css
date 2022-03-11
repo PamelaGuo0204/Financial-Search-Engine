@@ -1005,7 +1005,7 @@ input.btn_main_2::placeholder {
     text-align: center;
     margin-right: 12px;
     height: 53px;
-    padding: 15px 35px;
+    padding: 11px 35px;
     font-size: 18px;
     border-radius: 40px;
     border: 0px;
@@ -1015,6 +1015,34 @@ input.btn_main_2::placeholder {
 input.btn_main_3::placeholder {
     color: #ffffff;
 }
+
+.btn_main_4 {
+    float: left;
+    padding-right: 0;
+    background-color: white;
+    color: #848484;
+    text-align: center;
+    margin-right: 12px;
+    height: 53px;
+    padding: 12px 35px;
+    font-size: 18px;
+    border-radius: 40px;
+    border: 0px;
+}
+
+
+.btn_main_4 a {
+    width: 100%;
+    color: #848484;
+    background-color: white;
+}
+
+.btn_main_4 a:hover {
+    color: black;
+    
+}
+
+
 
 .Recurments_section_2{
     width: 100%;
@@ -1106,4 +1134,59 @@ input.btn_main_3::placeholder {
     }
 
 
+.changepage_section {
+    width: 100%;
+    float: left;
+    padding-top: 30px;
+    padding-bottom: 0px;
+}
+
+.page-icon {
+    margin: 20px 0 0 0; /*设置距离顶部20像素*/
+    font-size: 0; /*修复行内元素之间空隙间隔*/
+    text-align: center; /*设置内容居中显示*/
+}
+
+    /*设置共有的的样式布局，主要是进行代码优化，提高运行效率*/
+    .page-icon a, .page-disabled, .page-next {
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        padding: 4px 10px 5px;
+        font-size: 14PX; /*修复行内元素之间空隙间隔*/
+        margin-right: 10px;
+    }
+
+    /*对 a 标签进行样式布局 */
+    .page-icon a {
+        text-decoration: none; /*取消链接的下划线*/
+        color: #191970;
+    }
+
+.page-current {
+    color: #B0C4DE;
+    padding: 4px 10px 5px;
+    font-size: 14PX; /*修复行内元素之间空隙间隔*/
+}
+
+.page-disabled {
+    color: #ccc;
+}
+
+    .page-next i, .page-disabled i {
+        cursor: pointer; /*设置鼠标经过时的显示状态，这里设置的是显示状态为小手状态*/
+        display: inline-block; /*设置显示的方式为行内块元素*/
+        width: 5px;
+        height: 9px;
+
+    }
+
+    .page-disabled i {
+        background-position: -80px -608px;
+        margin-right: 0px;
+    }
+
+.page-next i {
+    background-position: -62px -608px;
+    margin-left: 0px;
+}
 
