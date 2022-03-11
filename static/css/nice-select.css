@@ -3,31 +3,40 @@
 ---------------------------------------------------------------------*/
 
 .nice-select {
-  background-color: #f6f6f6;
-  border-radius: 0;
-  box-sizing: border-box;
-  clear: both;
-  display: block;
-  float: left;
-  height: auto;
-  outline: none;
-  padding-left: 20px;
-  padding-right: 35px;
-  position: relative;
-  -webkit-transition: all 0.2s ease-in-out;
-  transition: all 0.2s ease-in-out;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  width: 50%;
-  cursor: pointer;
-  font-family: inherit;
-  font-weight: normal;
-  line-height: 50px;
-  text-align: left !important;
-  white-space: nowrap;
-  font-weight: 300;
+    /*background-color: #f6f6f6;*/
+    border-radius: 0;
+    box-sizing: border-box;
+    clear: both;
+    display: block;
+    float: left;
+    height: auto;
+    outline: none;
+    padding-left: 20px;
+    padding-right: 35px;
+    position: relative;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    width: 50%;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: normal;
+    line-height: 35px;
+    /*text-align: left !important;*/
+    white-space: nowrap;
+    font-weight: 300;
+
+    background-color: white;
+    text-align: center;
+    margin-right: 12px;
+    height: 53px;
+    padding: 15px 35px;
+    font-size: 18px;
+    border-radius: 40px;
+    border: 0px;
 }
 
 .nice-select:after {

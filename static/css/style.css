@@ -317,6 +317,25 @@ button {
     display: flex;
 }
 
+.advance_text {
+    width: 55%;
+    margin: 0 auto;
+    text-align: center;
+    color: #ffffff;
+    padding-top: 50px;
+    display: flex;
+}
+
+div > label {
+    position: relative;
+    margin-top:10px;
+    margin-right: 120px;
+    color: #ffffff;
+}
+
+
+
+
 .bt_main{
      width: 20%;
      margin: 0 auto;
@@ -575,7 +594,7 @@ button {
 .box{
      width: 100%;
      float: left;
-     margin-top: 90px;
+     margin-top: 10px;
 }
 
 .find_bt {
@@ -978,6 +997,7 @@ input.btn_main_2::placeholder {
 }
 
 .btn_main_3 {
+  
     float: left;
     padding-right: 0;
     background-color: #222121;
@@ -990,6 +1010,7 @@ input.btn_main_2::placeholder {
     border-radius: 40px;
     border: 0px;
 }
+
 
 input.btn_main_3::placeholder {
     color: #ffffff;
@@ -1083,5 +1104,6 @@ input.btn_main_3::placeholder {
         color: #ffffff;
         background-color: #B0C4DE;
     }
+
 
 
