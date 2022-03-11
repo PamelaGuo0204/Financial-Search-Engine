@@ -25,7 +25,7 @@ def textTransformation(content):
     content = content.lower()
     
     #LoadMyOwnStopWords
-    with open('./englishST.txt') as f1:
+    with open('englishST.txt') as f1:
         stopWord = f1.read()
         stopWord = stopWord.split()
     
@@ -54,14 +54,18 @@ def textTransformation(content):
 #Preprocess the query in txt file into a query list
 #Before: 'q9: "middle east" AND peace'
 #After: ' "middle east" AND peace '
-def getBooleanQuery():
-    qlist = []
-    for line in open('./queries.boolean.txt'):
-        qlist.append(line.strip('\n'))#eat '\n'
-        
-    for i in range(len(qlist)):
-        tmp = qlist[i].split(' ', 1)
-        qlist[i] = tmp[1]
+# def getBooleanQuery():
+#     qlist = []
+#     for line in open('./queries.boolean.txt'):
+#         qlist.append(line.strip('\n'))#eat '\n'
+#
+#     for i in range(len(qlist)):
+#         tmp = qlist[i].split(' ', 1)
+#         qlist[i] = tmp[1]
+#     return qlist
+def getQuery(query):
+    qlist = textTransformation(query)
+    qlist = qlist.split(' ')
     return qlist
 
 #Categorize the Query and return a type list
@@ -299,16 +303,24 @@ def Search(query,typ):
     return doc#doc is a documentID set
 
 
-def getTFIDFQuery():
-    qlist = []
-    for line in open('./queries.ranked.txt'):
-        qlist.append(line.strip('\n'))#eat '\n'
-        
-    for i in range(len(qlist)):
-        qlist[i] = textTransformation(qlist[i][2:])#eat query index and space
+# def getTFIDFQuery():
+#     qlist = []
+#     for line in open('./queries.ranked.txt'):
+#         qlist.append(line.strip('\n'))#eat '\n'
+#
+#     for i in range(len(qlist)):
+#         qlist[i] = textTransformation(qlist[i][2:])#eat query index and space
+#     return qlist
+
+#get the query from the web
+#input: a query from the web
+#output: preprocessed query
+def getTFIDFQuery(query):
+    qlist = textTransformation(query)
     return qlist
 
-def getTFIDFvalue(term, DocID, currentIndex, df):
+
+def getTFIDFvalue(term, DocID, currentIndex, df, docCount):
     score = 0
     #del currentIndex['fre']
     
@@ -321,7 +333,7 @@ def getTFIDFvalue(term, DocID, currentIndex, df):
         
     return score
 
-def TFIDFSearch(query, termIndex):
+def TFIDFSearch(query, termIndex,docCount):
     termList = query.split()
     scoreDict = {}
     #对每个term求值，用np矩阵
@@ -335,57 +347,77 @@ def TFIDFSearch(query, termIndex):
             currentIndex = termIndex[term]
             
             df = termIndex[term]['fre']
-            scoreDict[ID] += getTFIDFvalue(term, ID, currentIndex, df )
+            scoreDict[ID] += getTFIDFvalue(term, ID, currentIndex, df, docCount)
     
     ansList = sorted(scoreDict.items(), key=lambda v: v[1], reverse = True) 
     ansList.sort(key = lambda x: (-x[1], int(x[0])))
     return ansList
     
-
-
-docCount = 10000
-
-f = open('./BloombergIndex.pkl','rb')
-termIndex = pickle.load(f)
-#print(TFIDFSearch('incom tax', termIndex))
-
-qlist = getBooleanQuery()
-typeList = typeQuery(qlist)
-
-#Output the Boolean answers
-f = open("./results.boolean.txt",'w')
-for i in range(len(qlist)):
-    doc = Search(qlist[i],typeList[i])
-    doc = list(map(int, doc))
-    doc = sorted(doc)
-    
-    #TXT输出搜索结果
-    
-    for x in doc:
-        ans = (str(i+1) + ',' + str(x))
-        f.write(ans + '\n')
-    
-    ''' 
-    #IPython输出搜索结果
-    
-    print('Current query: ' + qlist[i])
-    print('Find %d documents.' % len(doc))
-    print('DocID are: ')
-    print(doc)
-    print('')
-    '''
-print('Successfully build boolean answers!')
-
-
-#Output the TFIDF answers
-tflist = getTFIDFQuery()
-f = open("./results.ranked.txt",'w')
-for i in range(len(tflist)):
-    ansList = TFIDFSearch(tflist[i], termIndex)
+#output the tfidf search result
+#input:a query on the web
+#output: a list of docids
+def output(query):
+    result = []
+    docCount = 10000
+    f = open('BloombergIndex 20220217.pkl', 'rb')
+    termIndex = pickle.load(f)
+    tflist = getTFIDFQuery(query)
+    ansList = TFIDFSearch(tflist, termIndex,docCount)
     count = 0
-    for x in ansList:
-        count += 1
+    for item in ansList:
+        result.append(str(item[0]))
+        count = count + 1
         if count > 150:
             break
-        f.write(str(i+1) + ',' + str(x[0]) + ',' + format(x[1], '.4f') + '\n')
-print('Successfully build ranked answers!')
+    print("sucessfully search!")
+    print(result)
+    return result
+
+
+
+# docCount = 10000
+#
+# f = open('BloombergIndex.pkl', 'rb')
+# termIndex = pickle.load(f)
+# #print(TFIDFSearch('incom tax', termIndex))
+#
+# qlist = getQuery()
+# typeList = typeQuery(qlist)
+#
+# #Output the Boolean answers
+# f = open("./results.boolean.txt",'w')
+# for i in range(len(qlist)):
+#     doc = Search(qlist[i],typeList[i])
+#     doc = list(map(int, doc))
+#     doc = sorted(doc)
+#
+#     #TXT输出搜索结果
+#
+#     for x in doc:
+#         ans = (str(i+1) + ',' + str(x))
+#         f.write(ans + '\n')
+#
+#     '''
+#     #IPython输出搜索结果
+#
+#     print('Current query: ' + qlist[i])
+#     print('Find %d documents.' % len(doc))
+#     print('DocID are: ')
+#     print(doc)
+#     print('')
+#     '''
+# print('Successfully build boolean answers!')
+#
+# #Output the TFIDF answers
+# tflist = getTFIDFQuery()
+# f = open("./results.ranked.txt",'w')
+# for i in range(len(tflist)):
+#     ansList = TFIDFSearch(tflist[i], termIndex)
+#     count = 0
+#     for x in ansList:
+#         count += 1
+#         if count > 150:
+#             break
+#         f.write(str(i+1) + ',' + str(x[0]) + ',' + format(x[1], '.4f') + '\n')
+# print('Successfully build ranked answers!')
+output("bank")
