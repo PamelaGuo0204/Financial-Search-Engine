@@ -13,3 +13,6 @@ headlineWordMap.pkl
 tfidfDict.pkl
 wordMap.pkl
 static/.DS_Store
+CompressedContentMatrix.npz
+CompressedHeadlineMatrix.npz
+CompressedTFIDFMatrix.npz
