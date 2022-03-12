@@ -58,20 +58,19 @@
 
     </nav>
     <!-- header  section end-->
-
     <!-- Recurments  section start-->
     <div class="services_section">
         <div class="container">
             <h1 class="services_text">Query results</h1>
         </div>
     </div>
-    <form action="{{ url_for('select_time') }}" method="POST">
+    <form action="{{ url_for('advance_content_select_time') }}" method="POST">
     <div class="Recurments_section">
         <div class="container">
             <div class="row box">
                 <div class="col-md-btn">
                     <div class="btn_main">
-                        <div class="btn_main_3">Query results: {{total}}({{total_time}})</div>
+                        <div class="btn_main_3">Content Search results: {{total}}({total_time})</div>
                     </div>
                 </div>
                 <div class="col-md-btn">
@@ -122,31 +121,9 @@
         </div>
     </div>
     {% endfor %}
-
-    <!--页码-->
-<!--    <div class="Recurments_section_2">-->
-<!--    <ul class="pagination">-->
-<!--    {% if datas.show_status == 1 %}-->
-<!--        <li><a href="{{ url_for('show') }}?p=1">首页</a></li>-->
-<!--        <li><a href="{{ url_for('show') }}?p={{ datas.p-1 }}">上一页</a></li>-->
-<!--    {% endif %}-->
-<!--    {% for li in datas.page_list %}-->
-<!--        {% if li == datas.p %}-->
-<!--        <li class="active"><span>{{ li }}</span></li>-->
-<!--        {% else %}-->
-<!--        <li><a href="{{ url_for('show')}}?p={{ li }}">{{ li }}</a></li>-->
-<!--        {% endif %}-->
-<!--    {% endfor %}-->
-<!--    {% if datas.p < datas.page_total %}-->
-<!--        <li class=''><a href="{{ url_for('show')}}?p={{ datas.p+1 }}">下一页</a></li>-->
-<!--        <li class=''><a href="{{ url_for('show')}}?p={{ datas.page_total }}">尾页</a></li>-->
-<!--    {%endif%}-->
-<!--    </ul>-->
-<!--</div>-->
-
-
     <!-- Recurments  section end-->
-    <!--Page start-->
+
+     <!--Page start-->
      <div class="changepage_section">
         <div class="page-icon">
             {% if datas.show_status == 1 %}
@@ -167,6 +144,7 @@
         </div>
     </div>
     <!--Page end-->
+
 
     <!-- footer section start-->
     <div class="footer_section layout_padding">

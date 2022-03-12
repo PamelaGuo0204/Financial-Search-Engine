@@ -407,8 +407,8 @@ def output(query):
     for item in ansList:
         result.append(str(item[0]))
         count = count + 1
-        if count > 150:
-            break
+        #if count > 150:
+        #    break
             
     print("sucessfully search!")
     print(result)
@@ -431,8 +431,8 @@ def outputHeadline(query):
     for item in ansList:
         result.append(str(item[0]))
         count = count + 1
-        if count > 150:
-            break
+        #if count > 150:
+         #   break
             
     print("sucessfully search!")
     print(result)
@@ -455,8 +455,8 @@ def outputContent(query):
     for item in ansList:
         result.append(str(item[0]))
         count = count + 1
-        if count > 150:
-            break
+        #if count > 150:
+        #    break
             
     print("sucessfully search!")
     return result

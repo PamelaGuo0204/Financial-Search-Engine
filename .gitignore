@@ -16,3 +16,4 @@ static/.DS_Store
 CompressedContentMatrix.npz
 CompressedHeadlineMatrix.npz
 CompressedTFIDFMatrix.npz
+.idea

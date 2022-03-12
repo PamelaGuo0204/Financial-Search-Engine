@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify,redirect, url_for
 import Group as g
 from flask_pymongo import PyMongo
 import math
+import time
 import pickle
 from scipy import sparse
 import numpy as np
@@ -88,6 +89,7 @@ def index():
 #show the result
 @app.route("/result/", methods=['GET','POST'])
 def show():
+    start = time.time()
     p = request.args.get('p')
     show_status = 0
     if not p:
@@ -101,31 +103,37 @@ def show():
     if request.method == 'POST':
         global text
         text = request.form["txt"]
-    # if the input is empty, stay on the same page
-    if text!= "":
-        global result
-        result = g.output(text)
-        # doc = find_data({'docno': {"$in": result}})
-        doc = find_data({'docno': {"$in": result}}).limit(10).skip(limit_start)
-            #总页数
-        total = count_data({'docno': {"$in": result}})
-        page_total = int(math.ceil(total / 10))
-        page_list = get_page(page_total, p)
-        datas = {
+        # if the input is empty, stay on the same page
+        if text!= "":
+            global result
+            result = g.output(text)
+            # 总页数
+            global total
+            total = count_data({'docno': {"$in": result}})
+        else:
+            return redirect(url_for('index'))
+
+    doc = find_data({'docno': {"$in": result}}).limit(10).skip(limit_start)
+    # total = count_data({'docno': {"$in": result}})
+    page_total = int(math.ceil(total / 10))
+    page_list = get_page(page_total, p)
+    datas = {
                 'data_list': doc,
                 'p': p,
                 'page_total': page_total,
                 'show_status': show_status,
                 'page_list': page_list
             }
-        return render_template("outcome.html", text=text,datas=datas)
-    else:
-        return redirect(url_for('index'))
+    end = time.time()
+    total_time = (end-start)*1000
+    return render_template("outcome.html", total=total,total_time=total_time,text=text,datas=datas)
+
 
 
 
 @app.route('/result/time/',methods=['GET','POST'])
 def select_time():
+    start = time.time()
     p = request.args.get('p')
     show_status = 0
     if not p:
@@ -137,99 +145,81 @@ def select_time():
     limit_start = (p - 1) * 10
 
     if request.method == 'POST':
-        global time
+        global time1
         global text1
-        time = str(request.form["time"])
+        time1 = str(request.form["time"])
         text1 = request.form["txt"]
-    if text1 != "":
-        global results
-        results = g.output(text1)
+        if text1 != "":
+            global results, total
+            results = g.output(text1)
+            if time1 == "Anytime":
+                # 总页数
+                total = count_data({'docno': {"$in": results}})
 
-    if time == "Anytime":
+            elif time1 == "Since 2013":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2014":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2015":
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2016":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}})
+
+    if time1 == "Anytime":
         doc = find_data({'docno': {"$in": results}}).limit(10).skip(limit_start)
-        # 总页数
-        total = count_data({'docno': {"$in": results}})
-        page_total = int(math.ceil(total / 10))
-        page_list = get_page(page_total, p)
-        datas = {
-            'data_list': doc,
-            'p': p,
-            'page_total': page_total,
-            'show_status': show_status,
-            'page_list': page_list
-        }
-        return render_template("outcome1.html", text=text1, datas=datas)
 
-    elif time == "Since 2013":
-        doc = find_data({'docno': {"$in": results},'time':{"$gte":"2013-01-01T00:00:00Z","$lt":"2013-12-31T23:59:99Z"}}).limit(10).skip(limit_start)
-        # 总页数
-        total = count_data({'docno': {"$in": results},'time':{"$gte":"2013-01-01T00:00:00Z","$lt":"2013-12-31T23:59:99Z"}})
-        page_total = int(math.ceil(total / 10))
-        page_list = get_page(page_total, p)
-        datas = {
-            'data_list': doc,
-            'p': p,
-            'page_total': page_total,
-            'show_status': show_status,
-            'page_list': page_list
-        }
-        return render_template("outcome1.html", text=text1,datas=datas)
+    elif time1 == "Since 2013":
+        doc = find_data(
+            {'docno': {"$in": results}, 'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
 
-    elif time == "Since 2014":
+    elif time1 == "Since 2014":
         doc = find_data(
             {'docno': {"$in": results}, 'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}}).limit(
             10).skip(limit_start)
-        # 总页数
-        total = count_data({'docno': {"$in": results}, 'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}})
-        page_total = int(math.ceil(total / 10))
-        page_list = get_page(page_total, p)
-        datas = {
-            'data_list': doc,
-            'p': p,
-            'page_total': page_total,
-            'show_status': show_status,
-            'page_list': page_list
-        }
-        return render_template("outcome1.html", text=text1,datas=datas)
 
-    elif time == "Since 2015":
+    elif time1 == "Since 2015":
         doc = find_data(
             {'docno': {"$in": results}, 'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}}).limit(
             10).skip(limit_start)
-        # 总页数
-        total = count_data({'docno': {"$in": results}, 'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}})
-        page_total = int(math.ceil(total / 10))
-        page_list = get_page(page_total, p)
-        datas = {
-            'data_list': doc,
-            'p': p,
-            'page_total': page_total,
-            'show_status': show_status,
-            'page_list': page_list
-        }
-        return render_template("outcome1.html", text=text1,datas=datas)
 
-    elif time == "Since 2016":
+    elif time1 == "Since 2016":
         doc = find_data(
             {'docno': {"$in": results}, 'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}}).limit(
             10).skip(limit_start)
-        # 总页数
-        total = count_data({'docno': {"$in": results}, 'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}})
-        page_total = int(math.ceil(total / 10))
-        page_list = get_page(page_total, p)
-        datas = {
-            'data_list': doc,
-            'p': p,
-            'page_total': page_total,
-            'show_status': show_status,
-            'page_list': page_list
-        }
-        return render_template("outcome1.html", text=text1,datas=datas)
+
+    page_total = int(math.ceil(total / 10))
+    page_list = get_page(page_total, p)
+    datas = {
+        'data_list': doc,
+        'p': p,
+        'page_total': page_total,
+        'show_status': show_status,
+        'page_list': page_list
+    }
+    end = time.time()
+    total_time = (end - start) * 1000
+    return render_template("outcome1.html", total=total, total_time=total_time,text=text1, datas=datas)
 
 
 #advance search
 @app.route("/advanced_search/",methods=['GET','POST'])
 def advanced_search():
+    start = time.time()
     p = request.args.get('p')
     show_status = 0
     if not p:
@@ -241,71 +231,224 @@ def advanced_search():
     limit_start = (p - 1) * 10
 
     if request.method == 'POST':
-        global text
+        global text,title
         text = request.form["txt"]
         title = request.form["type"]
-    print(title)
+        global advance_result,total
+        if title == "Title":
+            advance_result = g.outputHeadline(text)
+            total = count_data({'docno': {"$in": advance_result}})
+        elif title == "Article":
+            advance_result = g.outputContent(text)
+            total = count_data({'docno': {"$in": advance_result}})
+        elif title == "Full text":
+            advance_result = g.output(text)
+            total = count_data({'docno': {"$in": advance_result}})
 
+    doc = find_data({'docno': {"$in": advance_result}}).limit(10).skip(limit_start)
+    page_total = int(math.ceil(total / 10))
+    page_list = get_page(page_total, p)
+    datas = {
+            'data_list': doc,
+            'p': p,
+            'page_total': page_total,
+            'show_status': show_status,
+            'page_list': page_list
+    }
+    end = time.time()
+    total_time = (end - start) * 1000
     if title == "Title":
-        global result_T
-        result_T = g.outputHeadline(text)
-        # doc = find_data({'docno': {"$in": result}})
-        doc = find_data({'docno': {"$in": result_T}}).limit(10).skip(limit_start)
-        # 总页数
-        total = count_data({'docno': {"$in": result_T}})
-        page_total = int(math.ceil(total / 10))
-        page_list = get_page(page_total, p)
-        datas = {
-            'data_list': doc,
-            'p': p,
-            'page_total': page_total,
-            'show_status': show_status,
-            'page_list': page_list
-        }
-        return render_template("outcome.html", text=text, datas=datas)
+        return render_template("outcome_title_time.html", total=total, text=text, datas=datas)
+
+    elif title == "Article":
+        return render_template("outcome_content_time.html", total=total, text=text, datas=datas)
+
+    elif title == "Full text":
+        return render_template("outcome.html", total=total, total_time=total_time,text=text, datas=datas)
 
 
-    if title == "Article":
-        global result_A
-        result_A = g.outputContent(text)
-        # doc = find_data({'docno': {"$in": result}})
-        doc = find_data({'docno': {"$in": result_A}}).limit(10).skip(limit_start)
-        # 总页数
-        total = count_data({'docno': {"$in": result_A}})
-        page_total = int(math.ceil(total / 10))
-        page_list = get_page(page_total, p)
-        datas = {
-            'data_list': doc,
-            'p': p,
-            'page_total': page_total,
-            'show_status': show_status,
-            'page_list': page_list
-        }
-        return render_template("outcome.html", text=text, datas=datas)
+#advance title search + select time
+@app.route("/advance/time",methods=['GET','POST'])
+def advance_title_select_time():
+    start = time.time()
+    p = request.args.get('p')
+    show_status = 0
+    if not p:
+        p = 1
+    else:
+        p = int(p)
+        if p > 1:
+            show_status = 1
+    limit_start = (p - 1) * 10
+
+    if request.method == 'POST':
+        global time1
+        global text1
+        time1 = str(request.form["time"])
+        text1 = request.form["txt"]
+        if text1 != "":
+            global results,total
+            results = g.outputHeadline(text1)
+            if time1 == "Anytime":
+                # 总页数
+                total = count_data({'docno': {"$in": results}})
+
+            elif time1 == "Since 2013":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2014":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2015":
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2016":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}})
+
+    if time1 == "Anytime":
+        doc = find_data({'docno': {"$in": results}}).limit(10).skip(limit_start)
+
+    elif time1 == "Since 2013":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2014":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2015":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2016":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    page_total = int(math.ceil(total / 10))
+    page_list = get_page(page_total, p)
+    datas = {
+        'data_list': doc,
+        'p': p,
+        'page_total': page_total,
+        'show_status': show_status,
+        'page_list': page_list
+    }
+    end = time.time()
+    total_time = (end - start) * 1000
+    return render_template("outcome_title_time.html", total=total,total_time=total_time,text=text1, datas=datas)
 
 
-    if title == "Full text":
-        global result_F
-        result_F = g.output(text)
-        # doc = find_data({'docno': {"$in": result}})
-        doc = find_data({'docno': {"$in": result_F}}).limit(10).skip(limit_start)
-        # 总页数
-        total = count_data({'docno': {"$in": result_F}})
-        page_total = int(math.ceil(total / 10))
-        page_list = get_page(page_total, p)
-        datas = {
-            'data_list': doc,
-            'p': p,
-            'page_total': page_total,
-            'show_status': show_status,
-            'page_list': page_list
-        }
-        return render_template("outcome.html", text=text, datas=datas)
+# advance content search + select time
+@app.route("/advance_content/time", methods=['GET', 'POST'])
+def advance_content_select_time():
+    start = time.time()
+    p = request.args.get('p')
+    show_status = 0
+    if not p:
+        p = 1
+    else:
+        p = int(p)
+        if p > 1:
+            show_status = 1
+    limit_start = (p - 1) * 10
+
+    if request.method == 'POST':
+        global time1
+        global text1
+        time1 = str(request.form["time"])
+        text1 = request.form["txt"]
+        if text1 != "":
+            global results, total
+            results = g.outputContent(text1)
+            if time1 == "Anytime":
+                # 总页数
+                total = count_data({'docno': {"$in": results}})
+
+            elif time1 == "Since 2013":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2014":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2015":
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2016":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}})
+
+    if time1 == "Anytime":
+        doc = find_data({'docno': {"$in": results}}).limit(10).skip(limit_start)
+
+    elif time1 == "Since 2013":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2014":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2015":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2016":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    page_total = int(math.ceil(total / 10))
+    page_list = get_page(page_total, p)
+    datas = {
+        'data_list': doc,
+        'p': p,
+        'page_total': page_total,
+        'show_status': show_status,
+        'page_list': page_list
+    }
+    end = time.time()
+    total_time = (end - start) * 1000
+    return render_template("outcome_title_time.html", total=total,total_time=total_time,text=text1, datas=datas)
+
 
 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=8080,debug=False)
     # app.run(port=80, debug=True)
-
-
