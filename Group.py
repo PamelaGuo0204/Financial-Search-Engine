@@ -358,7 +358,7 @@ def TFIDFSearch(query, termIndex,docCount):
 #!!!!!!!!TermID范围为1~311648，实际为311648词，但tfidf矩阵第一行全0，实际不用操作
 def getExistDoc(termID, tfidfMatrix):
     
-    doc = set(tfidf[termID].nonzero()[0])
+    doc = set(tfidfMatrix[termID].nonzero()[0])
     return doc
     
     
@@ -420,8 +420,7 @@ def output(query):
         #if count > 150:
         #    break
             
-    print("sucessfully search!")
-    print(result)
+    print("sucessfully search:  " + query)
     return result
 
 def outputHeadline(query):
@@ -444,8 +443,7 @@ def outputHeadline(query):
         #if count > 150:
          #   break
             
-    print("sucessfully search!")
-    print(result)
+    print("sucessfully search:  " + query)
     return result
 
 def outputContent(query):
@@ -468,7 +466,7 @@ def outputContent(query):
         #if count > 150:
         #    break
             
-    print("sucessfully search!")
+    print("sucessfully search:  " + query)
     return result
 
 
