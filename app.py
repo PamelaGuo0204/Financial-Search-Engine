@@ -125,7 +125,7 @@ def show():
                 'page_list': page_list
             }
     end = time.time()
-    total_time = (end-start)*1000
+    total_time = round(end-start,2)
     return render_template("outcome.html", total=total,total_time=total_time,text=text,datas=datas)
 
 
@@ -178,6 +178,9 @@ def select_time():
                 total = count_data(
                     {'docno': {"$in": results},
                      'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}})
+        else:
+            return redirect(url_for('index'))
+
 
     if time1 == "Anytime":
         doc = find_data({'docno': {"$in": results}}).limit(10).skip(limit_start)
@@ -212,7 +215,7 @@ def select_time():
         'page_list': page_list
     }
     end = time.time()
-    total_time = (end - start) * 1000
+    total_time = round(end - start,2)
     return render_template("outcome1.html", total=total, total_time=total_time,text=text1, datas=datas)
 
 
@@ -256,7 +259,7 @@ def advanced_search():
             'page_list': page_list
     }
     end = time.time()
-    total_time = (end - start) * 1000
+    total_time = round(end - start,2)
     if title == "Title":
         return render_template("outcome_title_time.html", total=total, text=text, datas=datas)
 
@@ -315,6 +318,8 @@ def advance_title_select_time():
                 total = count_data(
                     {'docno': {"$in": results},
                      'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}})
+        else:
+            return redirect(url_for('index'))
 
     if time1 == "Anytime":
         doc = find_data({'docno': {"$in": results}}).limit(10).skip(limit_start)
@@ -353,7 +358,7 @@ def advance_title_select_time():
         'page_list': page_list
     }
     end = time.time()
-    total_time = (end - start) * 1000
+    total_time = round(end - start,2)
     return render_template("outcome_title_time.html", total=total,total_time=total_time,text=text1, datas=datas)
 
 
@@ -405,6 +410,8 @@ def advance_content_select_time():
                 total = count_data(
                     {'docno': {"$in": results},
                      'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}})
+        else:
+            return redirect(url_for('index'))
 
     if time1 == "Anytime":
         doc = find_data({'docno': {"$in": results}}).limit(10).skip(limit_start)
@@ -443,7 +450,7 @@ def advance_content_select_time():
         'page_list': page_list
     }
     end = time.time()
-    total_time = (end - start) * 1000
+    total_time = round(end - start,2)
     return render_template("outcome_title_time.html", total=total,total_time=total_time,text=text1, datas=datas)
 
 

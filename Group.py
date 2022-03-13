@@ -370,6 +370,14 @@ def TFIDFSearch(query, tfidf, docCount, searchType):
     elif searchType == 2:
         wordMap = contentWordMap
     termList = query.split()
+    
+    noResultFlag = 1#No Result
+    for word in termList:
+        if word in wordMap.keys():
+            noResultFlag = 0
+    if noResultFlag == 1:
+        return []
+        
     termIDList = [wordMap[word] for word in termList]#Term id list
     scoreDict = {}
     #对每个term求值，用np矩阵
@@ -399,6 +407,8 @@ def output(query):
     '''
 
     query = getTFIDFQuery(query)#规范化
+    
+    
     
     ansList = TFIDFSearch(query, tfidf, docCount, 0)#是一个tuple list (DocID, score)
     
