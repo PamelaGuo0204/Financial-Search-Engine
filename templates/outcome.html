@@ -71,7 +71,7 @@
             <div class="row box">
                 <div class="col-md-btn">
                     <div class="btn_main">
-                        <div class="btn_main_3">Query results: {{total}}({{total_time}})</div>
+                        <div class="btn_main_3">Query results: {{total}} News({{total_time}}s)</div>
                     </div>
                 </div>
                 <div class="col-md-btn">
@@ -115,7 +115,7 @@
                         <p class="lorem_ipsum_text">{{item.time}}</p>
                     </div>
                     <div class="col-sm-2">
-                        <button class="apply_now"><a href="{{item.url}}">Read more</a></button>
+                        <button class="apply_now" name="readmore" value="{{item.text}}"><a href="{{url_for('readmore')}}?text={{item.text}}&title={{item.headline}}&time={{item.time}}">Read more</a></button>
                     </div>
                 </div>
             </div>

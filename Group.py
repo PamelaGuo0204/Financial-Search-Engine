@@ -358,7 +358,7 @@ def TFIDFSearch(query, termIndex,docCount):
 #!!!!!!!!TermID范围为1~311648，实际为311648词，但tfidf矩阵第一行全0，实际不用操作
 def getExistDoc(termID, tfidfMatrix):
     
-    doc = set(tfidf[termID].nonzero()[0])
+    doc = set(tfidfMatrix[termID].nonzero()[0])
     return doc
     
     
@@ -370,6 +370,14 @@ def TFIDFSearch(query, tfidf, docCount, searchType):
     elif searchType == 2:
         wordMap = contentWordMap
     termList = query.split()
+    
+    noResultFlag = 0#No Result
+    for word in termList:
+        if word not in wordMap.keys():
+            noResultFlag = 1
+    if noResultFlag == 1:
+        return []
+        
     termIDList = [wordMap[word] for word in termList]#Term id list
     scoreDict = {}
     #对每个term求值，用np矩阵
@@ -400,6 +408,8 @@ def output(query):
 
     query = getTFIDFQuery(query)#规范化
     
+    
+    
     ansList = TFIDFSearch(query, tfidf, docCount, 0)#是一个tuple list (DocID, score)
     
     #输出result
@@ -410,8 +420,7 @@ def output(query):
         #if count > 150:
         #    break
             
-    print("sucessfully search!")
-    print(result)
+    print("sucessfully search:  " + query)
     return result
 
 def outputHeadline(query):
@@ -434,8 +443,7 @@ def outputHeadline(query):
         #if count > 150:
          #   break
             
-    print("sucessfully search!")
-    print(result)
+    print("sucessfully search:  " + query)
     return result
 
 def outputContent(query):
@@ -458,7 +466,7 @@ def outputContent(query):
         #if count > 150:
         #    break
             
-    print("sucessfully search!")
+    print("sucessfully search:  " + query)
     return result
 
 
