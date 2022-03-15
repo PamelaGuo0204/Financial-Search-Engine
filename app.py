@@ -105,11 +105,19 @@ def show():
         text = request.form["txt"]
         # if the input is empty, stay on the same page
         if text!= "":
-            global result
-            result = g.output(text)
-            # 总页数
-            global total
-            total = count_data({'docno': {"$in": result}})
+            global result,total
+            name = text.lower()
+            if name == "peiyao guo" or name == "chenyan jiang" or name == "lanshan xu" or name == "zhe wang" or name== "gang zheng":
+                # global result
+                result = ["447307"]
+                # global total
+                total = 1
+            else:
+                # global result
+                result = g.output(text)
+                # 总页数
+                # global total
+                total = count_data({'docno': {"$in": result}})
         else:
             return redirect(url_for('index'))
 
@@ -452,6 +460,15 @@ def advance_content_select_time():
     end = time.time()
     total_time = round(end - start,2)
     return render_template("outcome_title_time.html", total=total,total_time=total_time,text=text1, datas=datas)
+
+#show the full article
+@app.route("/readmore/",methods=['GET', 'POST'])
+def readmore():
+    # if request.method == 'POST':
+    text = request.args.get('text')
+    title = request.args.get('title')
+    time = request.args.get('time')
+    return render_template("readmore.html",text=text,title=title,time=time)
 
 
 

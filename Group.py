@@ -371,10 +371,10 @@ def TFIDFSearch(query, tfidf, docCount, searchType):
         wordMap = contentWordMap
     termList = query.split()
     
-    noResultFlag = 1#No Result
+    noResultFlag = 0#No Result
     for word in termList:
-        if word in wordMap.keys():
-            noResultFlag = 0
+        if word not in wordMap.keys():
+            noResultFlag = 1
     if noResultFlag == 1:
         return []
         
