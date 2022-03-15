@@ -269,10 +269,10 @@ def advanced_search():
     end = time.time()
     total_time = round(end - start,2)
     if title == "Title":
-        return render_template("outcome_title_time.html", total=total, text=text, datas=datas)
+        return render_template("outcome_title_time.html", total=total, total_time=total_time,text=text, datas=datas)
 
     elif title == "Article":
-        return render_template("outcome_content_time.html", total=total, text=text, datas=datas)
+        return render_template("outcome_content_time.html", total=total, total_time=total_time,text=text, datas=datas)
 
     elif title == "Full text":
         return render_template("outcome.html", total=total, total_time=total_time,text=text, datas=datas)
@@ -459,7 +459,7 @@ def advance_content_select_time():
     }
     end = time.time()
     total_time = round(end - start,2)
-    return render_template("outcome_title_time.html", total=total,total_time=total_time,text=text1, datas=datas)
+    return render_template("outcome_content_time.html", total=total,total_time=total_time,text=text1, datas=datas)
 
 #show the full article
 @app.route("/readmore/",methods=['GET', 'POST'])
