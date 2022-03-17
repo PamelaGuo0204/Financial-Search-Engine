@@ -83,6 +83,9 @@ def readmore4():
 @app.route("/index/")
 def index():
     return render_template("index.html")
+@app.route("/more/")
+def more():
+    return render_template("more.html")
 
 
 
@@ -164,28 +167,28 @@ def select_time():
                 # 总页数
                 total = count_data({'docno': {"$in": results}})
 
+            elif time1 == "Since 2010":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2010-01-01T00:00:00Z", "$lt": "2010-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2011":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2011-01-01T00:00:00Z", "$lt": "2011-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2012":
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2012-01-01T00:00:00Z", "$lt": "2012-12-31T23:59:99Z"}})
+
             elif time1 == "Since 2013":
                 # 总页数
                 total = count_data(
                     {'docno': {"$in": results},
                      'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}})
-
-            elif time1 == "Since 2014":
-                # 总页数
-                total = count_data(
-                    {'docno': {"$in": results},
-                     'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}})
-
-            elif time1 == "Since 2015":
-                total = count_data(
-                    {'docno': {"$in": results},
-                     'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}})
-
-            elif time1 == "Since 2016":
-                # 总页数
-                total = count_data(
-                    {'docno': {"$in": results},
-                     'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}})
         else:
             return redirect(url_for('index'))
 
@@ -193,24 +196,24 @@ def select_time():
     if time1 == "Anytime":
         doc = find_data({'docno': {"$in": results}}).limit(10).skip(limit_start)
 
+    elif time1 == "Since 2010":
+        doc = find_data(
+            {'docno': {"$in": results}, 'time': {"$gte": "2010-01-01T00:00:00Z", "$lt": "2010-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2011":
+        doc = find_data(
+            {'docno': {"$in": results}, 'time': {"$gte": "2011-01-01T00:00:00Z", "$lt": "2011-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2012":
+        doc = find_data(
+            {'docno': {"$in": results}, 'time': {"$gte": "2012-01-01T00:00:00Z", "$lt": "2012-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
     elif time1 == "Since 2013":
         doc = find_data(
             {'docno': {"$in": results}, 'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}}).limit(
-            10).skip(limit_start)
-
-    elif time1 == "Since 2014":
-        doc = find_data(
-            {'docno': {"$in": results}, 'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}}).limit(
-            10).skip(limit_start)
-
-    elif time1 == "Since 2015":
-        doc = find_data(
-            {'docno': {"$in": results}, 'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}}).limit(
-            10).skip(limit_start)
-
-    elif time1 == "Since 2016":
-        doc = find_data(
-            {'docno': {"$in": results}, 'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}}).limit(
             10).skip(limit_start)
 
     page_total = int(math.ceil(total / 10))
@@ -304,56 +307,56 @@ def advance_title_select_time():
                 # 总页数
                 total = count_data({'docno': {"$in": results}})
 
+            elif time1 == "Since 2010":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2010-01-01T00:00:00Z", "$lt": "2010-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2011":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2011-01-01T00:00:00Z", "$lt": "2011-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2012":
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2012-01-01T00:00:00Z", "$lt": "2012-12-31T23:59:99Z"}})
+
             elif time1 == "Since 2013":
                 # 总页数
                 total = count_data(
                     {'docno': {"$in": results},
                      'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}})
-
-            elif time1 == "Since 2014":
-                # 总页数
-                total = count_data(
-                    {'docno': {"$in": results},
-                     'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}})
-
-            elif time1 == "Since 2015":
-                total = count_data(
-                    {'docno': {"$in": results},
-                     'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}})
-
-            elif time1 == "Since 2016":
-                # 总页数
-                total = count_data(
-                    {'docno': {"$in": results},
-                     'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}})
         else:
             return redirect(url_for('index'))
 
     if time1 == "Anytime":
         doc = find_data({'docno': {"$in": results}}).limit(10).skip(limit_start)
 
+    elif time1 == "Since 2010":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2010-01-01T00:00:00Z", "$lt": "2010-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2011":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2011-01-01T00:00:00Z", "$lt": "2011-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2012":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2012-01-01T00:00:00Z", "$lt": "2012-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
     elif time1 == "Since 2013":
         doc = find_data(
             {'docno': {"$in": results},
              'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}}).limit(
-            10).skip(limit_start)
-
-    elif time1 == "Since 2014":
-        doc = find_data(
-            {'docno': {"$in": results},
-             'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}}).limit(
-            10).skip(limit_start)
-
-    elif time1 == "Since 2015":
-        doc = find_data(
-            {'docno': {"$in": results},
-             'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}}).limit(
-            10).skip(limit_start)
-
-    elif time1 == "Since 2016":
-        doc = find_data(
-            {'docno': {"$in": results},
-             'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}}).limit(
             10).skip(limit_start)
 
     page_total = int(math.ceil(total / 10))
@@ -396,56 +399,56 @@ def advance_content_select_time():
                 # 总页数
                 total = count_data({'docno': {"$in": results}})
 
+            elif time1 == "Since 2010":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2010-01-01T00:00:00Z", "$lt": "2010-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2011":
+                # 总页数
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2011-01-01T00:00:00Z", "$lt": "2011-12-31T23:59:99Z"}})
+
+            elif time1 == "Since 2012":
+                total = count_data(
+                    {'docno': {"$in": results},
+                     'time': {"$gte": "2012-01-01T00:00:00Z", "$lt": "2012-12-31T23:59:99Z"}})
+
             elif time1 == "Since 2013":
                 # 总页数
                 total = count_data(
                     {'docno': {"$in": results},
                      'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}})
-
-            elif time1 == "Since 2014":
-                # 总页数
-                total = count_data(
-                    {'docno': {"$in": results},
-                     'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}})
-
-            elif time1 == "Since 2015":
-                total = count_data(
-                    {'docno': {"$in": results},
-                     'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}})
-
-            elif time1 == "Since 2016":
-                # 总页数
-                total = count_data(
-                    {'docno': {"$in": results},
-                     'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}})
         else:
             return redirect(url_for('index'))
 
     if time1 == "Anytime":
         doc = find_data({'docno': {"$in": results}}).limit(10).skip(limit_start)
 
+    elif time1 == "Since 2010":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2010-01-01T00:00:00Z", "$lt": "2010-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2011":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2011-01-01T00:00:00Z", "$lt": "2011-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
+    elif time1 == "Since 2012":
+        doc = find_data(
+            {'docno': {"$in": results},
+             'time': {"$gte": "2012-01-01T00:00:00Z", "$lt": "2012-12-31T23:59:99Z"}}).limit(
+            10).skip(limit_start)
+
     elif time1 == "Since 2013":
         doc = find_data(
             {'docno': {"$in": results},
              'time': {"$gte": "2013-01-01T00:00:00Z", "$lt": "2013-12-31T23:59:99Z"}}).limit(
-            10).skip(limit_start)
-
-    elif time1 == "Since 2014":
-        doc = find_data(
-            {'docno': {"$in": results},
-             'time': {"$gte": "2014-01-01T00:00:00Z", "$lt": "2014-12-31T23:59:99Z"}}).limit(
-            10).skip(limit_start)
-
-    elif time1 == "Since 2015":
-        doc = find_data(
-            {'docno': {"$in": results},
-             'time': {"$gte": "2015-01-01T00:00:00Z", "$lt": "2015-12-31T23:59:99Z"}}).limit(
-            10).skip(limit_start)
-
-    elif time1 == "Since 2016":
-        doc = find_data(
-            {'docno': {"$in": results},
-             'time': {"$gte": "2016-01-01T00:00:00Z", "$lt": "2016-12-31T23:59:99Z"}}).limit(
             10).skip(limit_start)
 
     page_total = int(math.ceil(total / 10))
