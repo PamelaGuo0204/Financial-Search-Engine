@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <!-- basic -->
@@ -9,10 +9,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 <!-- site metas -->
-<title>Results</title>
+<title>Read more</title>
 <meta name="keywords" content="">
 <meta name="description" content="">
-<meta name="author" content="">
+<meta name="author" content="">	
 <!-- bootstrap css -->
 <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
 <!-- style css -->
@@ -25,7 +25,7 @@
 <link rel="stylesheet" href="/static/css/jquery.mCustomScrollbar.min.css">
 <!-- Tweaks for older IEs-->
 <link rel="stylesheet" href="/static/css/font-awesome.css">
-<!-- owl stylesheets -->
+<!-- owl stylesheets --> 
 <link rel="stylesheet" href="/static/css/owl.carousel.min.css">
 <link rel="stylesoeet" href="/static/css/owl.theme.default.min.css">
 <link rel="stylesheet" href="/static/css/jquery.fancybox.min.css" media="screen">
@@ -56,98 +56,87 @@
         </div>
     </nav>
   <!-- header section end-->
-    <!-- Recurments  section start-->
     <div class="services_section">
         <div class="container">
-            <h1 class="services_text">Query results</h1>
+            <h1 class="services_text">More information</h1>
         </div>
     </div>
-    <form action="{{ url_for('select_time') }}" method="POST">
-    <div class="Recurments_section">
-        <div class="container">
-            <div class="row box">
-                <div class="col-md-btn">
-                    <div class="btn_main">
-                        <div class="btn_main_3">Query results: {{total}} News({{total_time}}s)</div>
-                    </div>
-                </div>
-                <div class="col-md-btn">
-                    <div class="btn_main">
-
-                        <select name="time" id="time" style="width:1000px">
-                            <option value="Anytime">Anytime</option>
-                            <option value="Since 2010">Since 2010</option>
-                            <option value="Since 2011">Since 2011</option>
-                            <option value="Since 2012">Since 2012</option>
-                            <option value="Since 2013">Since 2013</option>
-                        </select>
+    <div class="marketing_section layout_padding">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="job_section">
+                        <h1 class="jobs_text">Introduction</h1>
+                        <p class="dummy_text">
+                            Financial News Search Engine is a website on which you can browse financial related
+                            news. This search engine is design for people with an urgent need to find financial news to help them manage their money
+                            better. Enter a query on it and you can return to the preview list of related news, and
+                            continue clicking on it to read more information. The site contains 447,307 news records
+                            and articles of about 458 words in length. We ended up storing the data in a matrix, and
+                            it took up 400GB of space, which was compressed for performance. We rank adopted the
+                            TF-IDF algorithm to search for full text, headlines, and full text plus headlines. Also, we
+                            added advanced search features for the richness of the project, such as filtering search by
+                            year.
+                        </p>
 
                     </div>
-
                 </div>
                 <div class="col-md-6">
-
-                    <div class="input-group">
-                        <input type="text" class="email_bt" placeholder="Please type a query here" name="txt" value="{{text}}">
-                        <button class="subscribe_bt" type="submit">Submit</button>
-                    </div>
-
-
+                    <div class="image_1 padding_0"><img src="/static/images/more1.png"></div>
                 </div>
-
             </div>
         </div>
     </div>
-    </form>
-    {%for item in datas.data_list%}
-    <div class="Recurments_section_2">
-        <div class="container">
-            <div class="product_section">
-                <div class="row padding_top_0">
-                    <div class="col-sm-2">
-                        <div class="one_text"><p>{{loop.index}}</p></div>
-                    </div>
-                    <div class="col-sm-8">
-                        <h1 class="software_text">{{item.headline}}</h1>
-                        <p class="lorem_ipsum_text">{{item.time}}</p>
-                    </div>
-                    <div class="col-sm-2">
-                        <button class="apply_now" name="readmore" value="{{item.text}}"><a href="{{url_for('readmore')}}?text={{item.text}}&title={{item.headline}}&time={{item.time}}">Read more</a></button>
+    <div class="marketing_section layout_padding">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="image_1 padding_0"><img src="/static/images/more2.png"></div>
+                </div>
+                <div class="col-md-6">
+                    <div class="job_section_2">
+                        <h1 class="jobs_text">System design</h1>
+                        <p class="dummy_text">
+                            We started working on our project by designing the functions and the whole system architecture. Then we use Google Cloud Platform to improve our system efficiency and help the system
+                            run faster to get the results. There are two parts of the system: the client part and the server part. The client part is
+                            some graphical interfaces used by users and presents the results to users. And the server part
+                            processes clients’ search requests and returns the results. We used python language for the back-end application and MongoDB to store data. The
+                            API is developed in flask framework and the fronted is developed in CSS and HTML. For the
+                            development environment, we use Github for the version control. We used the google cloud
+                            platform server for the deployment environment
+                        </p>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    {% endfor %}
-    <!-- Recurments  section end-->
+    <div class="marketing_section layout_padding">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="job_section">
+                        <h1 class="jobs_text">Data</h1>
+                        <p class="dummy_text">
+                            We are indebted to Philippe Remy for contributing the raw data for the financial news search, including the title, author, date, url, and content. The data is stored in the txt format and
+                            is organised in folders. Each natural day is a folder that holds the day’s Bloomberg news, with
+                            numerous pieces of information in each storey appearing in txt format
+                        </p>
 
-     <!--Page start-->
-     <div class="changepage_section">
-        <div class="page-icon">
-            {% if datas.show_status == 1 %}
-                <a href="{{ url_for('show') }}?p=1">First</a>
-                <a href="{{ url_for('show') }}?p={{ datas.p-1 }}">< Pre</a>
-            {% endif %}
-            {% for li in datas.page_list %}
-                {% if li == datas.p %}
-                   <span class="page-disabled"><i></i>{{ li }}</span>
-                {% else %}
-                    <a href="{{ url_for('show')}}?p={{ li }}">{{ li }}</a>
-                {% endif %}
-            {% endfor %}
-            {% if datas.p < datas.page_total %}
-                <a href="{{ url_for('show')}}?p={{ datas.p+1 }}">Next ></a>
-                <a href="{{ url_for('show')}}?p={{ datas.page_total }}">Tail</a>
-            {%endif%}
+                    </div>
+                </div>
+                <div class="col-md-6 padding_0">
+                    <div class="image_1"><img src="/static/images/more3.png"></div>
+                </div>
+            </div>
         </div>
     </div>
-    <!--Page end-->
-
+    
 
     <!-- footer section start-->
     <div class="footer_section layout_padding">
         <div class="container">
-
+            <h1 class="services_text">Thank you for visiting our website!</h1>
         </div>
     </div>
     <!-- footer section end-->

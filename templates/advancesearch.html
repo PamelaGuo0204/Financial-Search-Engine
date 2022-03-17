@@ -50,12 +50,12 @@
                     <a class="nav-link" href="{{ url_for('aboutus') }}">ABOUT US</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="more.html">MORE</a>
+                    <a class="nav-link" href="{{ url_for('more') }}">MORE</a>
                 </li>
             </ul>
         </div>
     </nav>
-    <!-- header section start-->
+  <!-- header section end-->
     <!-- search jobs section start-->
     <form action="{{ url_for('advanced_search') }}" method="POST">
     <div class="banner_section layout_padding">

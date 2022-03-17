@@ -793,13 +793,13 @@ figure:hover+span {
 }
 
 .join_bt {
-    width: 55%;
+    width: 60%;
     margin: 0 auto;
     text-align: center;
 }
 
 .join_text{
-     width: 100%;
+     width: 70%;
      float: left;
 }
 
@@ -1142,30 +1142,30 @@ input.btn_main_3::placeholder {
 }
 
 .page-icon {
-    margin: 20px 0 0 0; /*设置距离顶部20像素*/
-    font-size: 0; /*修复行内元素之间空隙间隔*/
-    text-align: center; /*设置内容居中显示*/
+    margin: 20px 0 0 0; 
+    font-size: 0; 
+    text-align: center; 
 }
 
-    /*设置共有的的样式布局，主要是进行代码优化，提高运行效率*/
+    
     .page-icon a, .page-disabled, .page-next {
         border: 1px solid #ccc;
         border-radius: 3px;
         padding: 4px 10px 5px;
-        font-size: 14PX; /*修复行内元素之间空隙间隔*/
+        font-size: 14PX; 
         margin-right: 10px;
     }
 
-    /*对 a 标签进行样式布局 */
+    
     .page-icon a {
-        text-decoration: none; /*取消链接的下划线*/
+        text-decoration: none; 
         color: #191970;
     }
 
 .page-current {
     color: #B0C4DE;
     padding: 4px 10px 5px;
-    font-size: 14PX; /*修复行内元素之间空隙间隔*/
+    font-size: 14PX; 
 }
 
 .page-disabled {
@@ -1173,8 +1173,8 @@ input.btn_main_3::placeholder {
 }
 
     .page-next i, .page-disabled i {
-        cursor: pointer; /*设置鼠标经过时的显示状态，这里设置的是显示状态为小手状态*/
-        display: inline-block; /*设置显示的方式为行内块元素*/
+        cursor: pointer; 
+        display: inline-block; 
         width: 5px;
         height: 9px;
 
